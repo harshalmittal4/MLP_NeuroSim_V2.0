@@ -60,15 +60,15 @@ int main() {
 
 	/* Initialization of synaptic array from input to hidden layer */
 	//arrayIH->Initialization<IdealDevice>();
-	arrayIH->Initialization<RealDevice>();
-	//arrayIH->Initialization<MeasuredDevice>();
+	//arrayIH->Initialization<RealDevice>();
+	arrayIH->Initialization<MeasuredDevice>();
 	//arrayIH->Initialization<SRAM>(param->numWeightBit);
 	//arrayIH->Initialization<DigitalNVM>(param->numWeightBit);
 	
 	/* Initialization of synaptic array from hidden to output layer */
 	//arrayHO->Initialization<IdealDevice>();
-	arrayHO->Initialization<RealDevice>();
-	//arrayHO->Initialization<MeasuredDevice>();
+	//arrayHO->Initialization<RealDevice>();
+	arrayHO->Initialization<MeasuredDevice>();
 	//arrayHO->Initialization<SRAM>(param->numWeightBit);
 	//arrayHO->Initialization<DigitalNVM>(param->numWeightBit);
 

@@ -40,6 +40,7 @@
 #include "formula.h"
 #include "Cell.h"
 
+
 /* General eNVM */
 void AnalogNVM::WriteEnergyCalculation(double wireCapCol) {
 	if (nonlinearIV) {  // Currently only for cross-point array
@@ -429,11 +430,12 @@ void RealDevice::Write(double deltaWeightNormalized) {
 	conductance = conductanceNew;
 }
 
+
 /* Measured device */
 MeasuredDevice::MeasuredDevice(int x, int y) {
 	this->x = x; this->y = y;	// Cell location: x (column) and y (row) start from index 0
-	readVoltage = 0.5;	// On-chip read voltage (Vr) (V)
-	readPulseWidth = 5e-9;	// Read pulse width (s) (will be determined by ADC)
+	readVoltage = 0.2;	// On-chip read voltage (Vr) (V)
+	readPulseWidth = 5e-9;	//** Read pulse width (s) (will be determined by ADC)
 	writeVoltageLTP = 2;	// Write voltage (V) for LTP or weight increase
 	writeVoltageLTD = 2;	// Write voltage (V) for LTD or weight decrease
 	writePulseWidthLTP = 100e-9;	// Write pulse width (s) for LTP or weight increase
@@ -441,21 +443,22 @@ MeasuredDevice::MeasuredDevice(int x, int y) {
 	writeEnergy = 0;	// Dynamic variable for calculation of write energy (J)
 	numPulse = 0;	// Number of write pulses used in the most recent write operation (dynamic variable)
 	cmosAccess = true;	// True: Pseudo-crossbar (1T1R), false: cross-point
-	FeFET = false;		// True: FeFET structure (Pseudo-crossbar only, should be cmosAccess=1)
-	gateCapFeFET = 2.1717e-18;	// Gate capacitance of FeFET (F)
+	FeFET = true;		// True: FeFET structure (Pseudo-crossbar only, should be cmosAccess=1)
+	gateCapFeFET = 1e-15;	// Gate capacitance of FeFET (F)
 	resistanceAccess = 15e3;	// The resistance of transistor (Ohm) in Pseudo-crossbar array when turned ON
-	nonlinearIV = false;	// Currently for cross-point array only
-	nonlinearWrite = false;	// Consider weight update nonlinearity or not
-	nonIdenticalPulse = false;	// Use non-identical pulse scheme in weight update or not
+	nonlinearIV = false;	// Currently for cross-point array only. // Consider I-V nonlinearity or not (Currently this option is for cross-point array. It is hard to have this option in pseudo-crossbar since it has an access transistor and the transistor's resistance can be comparable
+	// to RRAM's resistance after considering the nonlinearity. In this case, we have to iteratively find both the resistance and Vw across RRAM.
+	nonlinearWrite = true;	// Consider weight update nonlinearity or not
+	nonIdenticalPulse = true;	// Use non-identical pulse scheme in weight update or not
 	if (nonIdenticalPulse) {
-		VinitLTP = 2.85;    // Initial write voltage for LTP or weight increase (V)
-		VstepLTP = 0.05;    // Write voltage step for LTP or weight increase (V)
-		VinitLTD = 2.1;     // Initial write voltage for LTD or weight decrease (V)
-		VstepLTD = 0.05;    // Write voltage step for LTD or weight decrease (V)
-		PWinitLTP = 75e-9;  // Initial write pulse width for LTP or weight increase (s)
-		PWstepLTP = 5e-9;   // Write pulse width for LTP or weight increase (s)
-		PWinitLTD = 75e-9;  // Initial write pulse width for LTD or weight decrease (s)
-		PWstepLTD = 5e-9;   // Write pulse width for LTD or weight decrease (s)
+		VinitLTP = 0.6;    // Initial write voltage for LTP or weight increase (V)
+		VstepLTP = 0.1;    // Write voltage step for LTP or weight increase (V)
+		VinitLTD = 0.6;     // Initial write voltage for LTD or weight decrease (V)
+		VstepLTD = 0.1;    // Write voltage step for LTD or weight decrease (V)
+		PWinitLTP = 400e-9;  // Initial write pulse width for LTP or weight increase (s)
+		PWstepLTP = 0;   // Write pulse width for LTP or weight increase (s)
+		PWinitLTD = 400e-9;  // Initial write pulse width for LTD or weight decrease (s)
+		PWstepLTD = 0;   // Write pulse width for LTD or weight decrease (s)
 		writeVoltageSquareSum = 0;  // Sum of V^2 of non-identical pulses (dynamic variable)
 	}
 	readNoise = false;		// Consider read noise or not
